@@ -1,0 +1,51 @@
+field f: Int
+
+/// a function
+function fun01(x: Ref, y: Ref, b: Bool): Int
+requires b ? acc(x.f) : acc(y.f)
+
+/// a second function
+function fun02(x: Ref, y: Ref, b: Bool, i: Int): Int
+requires acc(x.f, b ? write : none)
+/// second precondition of fun02
+requires acc(y.f, !b ? write : none)
+
+/// P is a predicate
+predicate P(x: Ref)
+
+/// very good domain
+domain MyType {
+
+  /// this function
+  /// is very important
+  function id(MyType): MyType
+
+  /// the only axiom
+  axiom {
+    true
+  }
+}
+
+/// this is a method
+/// it does something
+method m(x: Ref, y: Ref)
+/// this documents the first precondition
+@doc("test")
+@doc("and another one")
+requires acc(x.f)
+/// documentation of the second precondition
+requires acc(y.f)
+/// a
+@doc("postcondition")
+ensures true
+{
+  /// annotated statement
+  var tmp: Int
+
+  // literate section within method?
+
+  while (true) ///the invariant
+  /// is always true
+  invariant true
+  {}
+}
