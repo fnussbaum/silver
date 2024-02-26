@@ -20,3 +20,4 @@ documentation/syntax/sil-syntax.aux
 .metals
 .bloop
 project/**/metals.sbt
+/silver_classpath.txt
