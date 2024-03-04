@@ -18,17 +18,7 @@ class DocPlugin extends SilverPlugin {
       * @return Modified source code
       */
     override def beforeParse(input: String, isImported: Boolean) : String = {
-
-      // matches lines starting with /// including leading whitespace
-      // TODO warning about docstrings with 
-      val docPattern = """(^\s*///)(.*)""".r
-      val transformedInput = input.linesIterator.map {
-        case docPattern(_, docstring) => s"""@doc("${docstring}")"""
-        case other => other
-      }.mkString("\n")
-      println(transformedInput)
-      println()
-      transformedInput
+      input
     }
 
     /** Called after parse AST has been constructed but before identifiers are resolved and the program is type checked.
