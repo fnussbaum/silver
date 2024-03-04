@@ -22,6 +22,9 @@ domain MyType {
 
   /// the only axiom
   axiom {
+    /// expression
+    /// wrap
+    /// this
     true
   }
 }
@@ -38,6 +41,7 @@ requires acc(y.f)
 /// a
 @doc("postcondition")
 ensures true
+decreases
 {
   /// annotated statement
   var tmp: Int
@@ -47,5 +51,7 @@ ensures true
   while (true) ///the invariant
   /// is always true
   invariant true
+  /// termination
+  decreases x
   {}
 }
