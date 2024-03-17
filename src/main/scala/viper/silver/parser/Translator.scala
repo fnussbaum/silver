@@ -81,8 +81,8 @@ case class Translator(program: PProgram) {
 
       val newBody = body.map(actualBody => stmt(actualBody).asInstanceOf[Seqn])
 
-      val finalMethod = m.copy(pres = pres.toSeq map (p => exp(PAnnotatedExp.wrapAnnotations(p.annotations, p.e)(p.pos))),
-                               posts = posts.toSeq map (p => exp(PAnnotatedExp.wrapAnnotations(p.annotations, p.e)(p.pos))),
+      val finalMethod = m.copy(pres = pres.toSeq map (p => exp(wrapAnnotations(p.annotations, p.e)(p.pos))),
+                               posts = posts.toSeq map (p => exp(wrapAnnotations(p.annotations, p.e)(p.pos))),
                                body = newBody)(m.pos, m.info, m.errT)
 
       members(m.name) = finalMethod
@@ -109,8 +109,8 @@ case class Translator(program: PProgram) {
   private def translate(f: PFunction): Function = f match {
     case PFunction(_, _, idndef, _, _, _, pres, posts, body) =>
       val f = findFunction(idndef)
-      val ff = f.copy( pres = pres.toSeq map (p => exp(PAnnotatedExp.wrapAnnotations(p.annotations, p.e)(p.pos))),
-                       posts = posts.toSeq map (p => exp(PAnnotatedExp.wrapAnnotations(p.annotations, p.e)(p.pos))),
+      val ff = f.copy( pres = pres.toSeq map (p => exp(wrapAnnotations(p.annotations, p.e)(p.pos))),
+                       posts = posts.toSeq map (p => exp(wrapAnnotations(p.annotations, p.e)(p.pos))),
                        body = body map (_.e.inner) map exp)(f.pos, f.info, f.errT)
       members(f.name) = ff
       ff
@@ -236,7 +236,7 @@ case class Translator(program: PProgram) {
         }) getOrElse Statements.EmptyStmt)(pos, info)
       case PElse(_, els) => stmt(els)
       case PWhile(_, cond, invs, body) =>
-        While(exp(cond.inner), invs.toSeq map (inv => exp(PAnnotatedExp.wrapAnnotations(inv.annotations, inv.e)(inv.pos))),
+        While(exp(cond.inner), invs.toSeq map (inv => exp(wrapAnnotations(inv.annotations, inv.e)(inv.pos))),
               stmt(body).asInstanceOf[Seqn])(pos, info)
       case PQuasihavoc(_, lhs, e) =>
         val (newLhs, newE) = havocStmtHelper(lhs, e)
@@ -317,6 +317,9 @@ case class Translator(program: PProgram) {
       case _ => sys.error("Can't havoc this kind of expression")
     }
   }
+
+  def wrapAnnotations(annotations: Seq[PAnnotation], pexp: PExp)(pos: (Position, Position)): PExp =
+    annotations.foldRight(pexp) { (ann, e) => new PAnnotatedExp(ann, e)(pos) }
 
   def extractAnnotation(pexp: PExp): (PExp, Map[String, Seq[String]]) = {
     pexp match {

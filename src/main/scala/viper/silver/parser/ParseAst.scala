@@ -645,16 +645,6 @@ case class PAnnotatedExp(annotation: PAnnotation, e: PExp)(val pos: (Position, P
   override def forceSubstitution(ts: PTypeSubstitution): Unit = e.forceSubstitution(ts)
 }
 
-object PAnnotatedExp {
-  def wrapAnnotations(annotations: Seq[PAnnotation], e: PExp)(pos: (Position, Position)): PExp =
-    annotations match {
-      case rest :+ last =>
-        wrapAnnotations(rest, new PAnnotatedExp(last, e)(pos))(pos)
-      case Nil =>
-        e
-    }
-}
-
 trait PSubstitutionMap[S <: PSubstitutionMap[S]] {
   /** Add a new substitution from `a` to `b`. */
   def add[T <: PSubstitutionMap[T]](a: PType, b: PType, default: T): Either[(PType, PType), T]
